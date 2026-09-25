@@ -1,0 +1,11 @@
+# Docker port publishing reaches only an all-interfaces bind inside the
+# container. The CLI refuses `--host 0.0.0.0` because that flag would expose
+# the unauthenticated Web API on the host's interfaces; this overlay is the
+# container NAT path. docker-compose.yml publishes 127.0.0.1:3080:3080 so the
+# host still exposes loopback unless the operator changes the mapping.
+# A patch replaces the targeted row's whole config, so port is restated.
+
+- id: webserver
+  config:
+    host: '0.0.0.0'
+    port: !!js ctx.webStartup.port ?? 3080

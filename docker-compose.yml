@@ -1,0 +1,26 @@
+name: deepseek-harness
+
+services:
+  dsh:
+    build:
+      context: .
+      args:
+        DSH_CLIENT_COMMIT_HASH: ${DSH_CLIENT_COMMIT_HASH:-0000000}
+    image: deepseek-harness:local
+    init: true
+    ports:
+      # Loopback on the host. Changing this to `3080:3080` publishes the
+      # unauthenticated Web API on every host interface.
+      - "127.0.0.1:${DSH_PORT:-3080}:3080"
+    volumes:
+      - ${DSH_WORKSPACE:-.}:/workspace
+      - dsh-home:/home/node/.dsh
+      - /Users/plusor/work:/home/node/work
+    environment:
+      DSH_HOME: /home/node/.dsh
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
+    working_dir: /workspace
+    stop_grace_period: 10s
+
+volumes:
+  dsh-home:
